@@ -8,6 +8,10 @@ trigger:
 
 pool:
   vmImage: 'windows-latest'
+  name: Azure Pipelines
+  demands:
+  - msbuild
+  - visualstudio
 
 variables:
   solution: '**/*.sln'
