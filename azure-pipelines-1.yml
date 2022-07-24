@@ -30,4 +30,26 @@ steps:
     msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+    
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    pathToPublish: $(Build.ArtifactStagingDirectory)
+    artifactName: test
+  condition: succeededOrFailed()
 
+- task: AzureRmWebAppDeployment@4
+  displayName: 'Azure App Service Deploy: ShivDemo'
+  inputs:
+    deployToSlotOrASE: true
+    SlotName: dev
+    appType: webApp
+    ConnectionType: AzureRM
+    azureSubscription: 'Azure Microsoft Internal Subscription_shivshakti (0afb25ba-fe24-42fa-b79a-5452b082afc5)'
+    ResourceGroupName: 'ShivDemo_group'
+    WebAppName: ShivDemo
+    packageForLinux: '$(Build.ArtifactStagingDirectory)/**/*.zip'
+    enableCustomDeployment: true
+    DeploymentType: 'webDeploy'
+    #ExcludeFilesFromAppDataFlag: false
+    #RemoveAdditionalFilesFlag: true
